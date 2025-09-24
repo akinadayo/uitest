@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>星灯のアルカディア - ノベルゲーム</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        html, body {
+            font-family: 'Noto Serif JP', serif;
+            overflow: hidden;
+            position: fixed;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            background: #87CEEB;
+            overscroll-behavior: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* 背景コンテナ */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            z-index: 0;
+        }
+        
+        /* 背景画像 */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            filter: saturate(1.1);
+            animation: subtle-zoom 20s ease-in-out infinite alternate;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .bg-image.active {
+            opacity: 1;
+        }
+        
+        /* 背景のフォールバック */
+        .bg-fallback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                #87CEEB 0%, 
+                #98D8E8 20%,
+                #B0E0E6 40%,
+                #E0F6FF 60%,
+                #F0FFFF 80%,
+                #FFFFFF 100%);
+            z-index: -1;
+        }
+        
+        /* 背景オーバーレイ - 控えめな雰囲気 */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0.05) 0%,
+                transparent 50%, 
+                rgba(0, 0, 0, 0.2) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* 控えめな雰囲気エフェクト */
+        .aurora-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 50% -50%, rgba(135, 206, 235, 0.1), transparent 70%);
+            animation: sunlight 15s ease-in-out infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        /* メインコンテナ */
+        .main-container {
+            position: relative;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 10;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding: 20px;
+        }
+        
+        /* タイトルセクション */
+        .title-section {
+            text-align: center;
+            position: relative;
+            width: 100%;
+            margin-top: 15vh;
+            align-self: center;
+        }
+        
+        /* タイトル背景のグロー効果（控えめ） */
+        .title-glow {
+            position: absolute;
+            inset: -80px;
+            background: radial-gradient(circle, rgba(135, 206, 250, 0.05), transparent 60%);
+            filter: blur(60px);
+            pointer-events: none;
+        }
+        
+        /* タイトルスタイル - 大きく濃い色で視認性向上 */
+        .game-title {
+            font-size: clamp(3rem, 13vw, 7.5rem);
+            font-weight: 800;
+            font-family: 'Kaisei Decol', 'Shippori Mincho', serif;
+            background: linear-gradient(90deg,
+                #004d4d 0%,
+                #006666 20%,
+                #2d5a7b 40%,
+                #4a708b 50%,
+                #2d5a7b 60%,
+                #006666 80%,
+                #004d4d 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 12s linear infinite, float 15s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 100, 150, 0.3);
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25))
+                    drop-shadow(0 0 20px rgba(0, 100, 150, 0.3));
+            margin-bottom: 30px;
+            white-space: nowrap;
+            padding: 0 20px;
+            display: block;
+            letter-spacing: 0.08em;
+        }
+        
+        @keyframes shine {
+            0% { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+        
+        .subtitle {
+            font-size: clamp(1.4rem, 6vw, 2.4rem);
+            font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+            background: linear-gradient(90deg,
+                rgba(10, 50, 90, 0.95) 0%,
+                rgba(30, 70, 110, 0.98) 50%,
+                rgba(10, 50, 90, 0.95) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.35em;
+            font-weight: 500;
+            text-shadow: 0 0 20px rgba(0, 40, 80, 0.5), 
+                         0 4px 8px rgba(0, 0, 0, 0.35);
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.25));
+            margin-bottom: 80px;
+            white-space: nowrap;
+            padding: 8px 15px;
+            position: relative;
+        }
+        
+        /* ボタンコンテナ */
+        .button-container {
+            position: fixed;
+            bottom: 40px;
+            right: clamp(10px, 4vw, 40px);
+            left: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: min(240px, calc(100vw - clamp(50px, 10vw, 100px)));
+            z-index: 30;
+            padding-bottom: env(safe-area-inset-bottom);
+            align-items: flex-end;
+            pointer-events: none;
+            overflow: visible;
+        }
+
+        .button-container > * {
+            pointer-events: auto;
+        }
+        
+        /* ボタンラッパー */
+        .button-wrapper {
+            position: relative;
+            margin: 0;
+            z-index: 20;
+            overflow: visible;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            width: clamp(260px, 60vw, 340px);
+            height: 46px;
+            flex: 0 0 auto;
+            align-self: flex-end;
+            margin-right: calc(-1 * clamp(52px, 13vw, 150px));
+        }
+
+        .button-container.loaded .button-wrapper {
+            animation: fadeInButton 0.6s ease forwards;
+        }
+        
+        .button-container .button-wrapper {
+            opacity: 0;
+        }
+        
+        /* グローリング - より繊細に */
+        .glow-ring {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -1px;
+            right: -1px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(135, 206, 250, 0.3) 50%,
+                transparent 100%);
+            border-radius: 0;
+            filter: blur(12px);
+            opacity: 0.6;
+            animation: glow-pulse 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+            clip-path: polygon(20% 0, 100% 0, 85% 100%, 0 100%);
+        }
+
+        /* ゲームボタン - 洗練されたデザイン */
+        .game-button {
+            all: unset;
+            box-sizing: border-box;
+            position: relative;
+            padding: 10px clamp(40px, 8vw, 80px) 10px clamp(60px, 12vw, 120px);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.25) 0%, 
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            -webkit-appearance: none;
+            appearance: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 0;
+            color: rgba(20, 60, 110, 0.95);
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 191, 255, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+            width: 100%;
+            max-width: 100%;
+            min-height: 42px;
+            height: 46px;
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 優雅な台形の形状 */
+            clip-path: polygon(20% 0, 100% 0, 85% 100%, 0 100%);
+            transform: translateX(0);
+            margin: 0;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        /* ボタンのホバー状態 */
+        .game-button:hover {
+            transform: translateX(6px) translateY(-2px);
+            box-shadow: 
+                0 8px 30px rgba(0, 0, 0, 0.12),
+                0 4px 12px rgba(0, 191, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.35) 0%, 
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.2) 100%);
+            color: rgba(20, 60, 110, 1);
+        }
+
+        /* ボタンのアクティブ状態 */
+        .game-button.active-touch {
+            transform: translateX(3px) translateY(0);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                0 1px 4px rgba(0, 191, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                rgba(255, 255, 255, 0.12) 100%);
+        }
+        
+        /* ボタンコンテンツ */
+        .button-content {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            pointer-events: auto;
+            padding: 0;
+        }
+        
+        /* アイコンスタイルを無効化（アイコン削除のため） */
+        .button-icon {
+            display: none;
+        }
+        
+        .button-text {
+            position: relative;
+            font-weight: 400;
+            color: inherit;
+            font-size: 1.1rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            font-feature-settings: "palt" 1;
+        }
+        
+        .button-underline {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 102, 204, 0.5), 
+                transparent);
+            pointer-events: none;
+        }
+        
+        /* 装飾的な軌道線 */
+        .orbit-ring-1,
+        .orbit-ring-2 {
+            position: absolute;
+            top: -5px;
+            bottom: -5px;
+            left: -10px;
+            right: -10px;
+            border-radius: 16px;
+            pointer-events: none;
+            clip-path: polygon(22% 0, 100% 0, 88% 100%, 0 100%);
+            opacity: 0.25;
+        }
+
+        .orbit-ring-1 {
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            animation: spin 20s linear infinite;
+        }
+
+        .orbit-ring-2 {
+            border: 1px solid rgba(135, 206, 235, 0.18);
+            animation: spin-reverse 30s linear infinite;
+        }
+        
+        /* シマーエフェクト - より上品に */
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.08) 45%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.08) 55%,
+                transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer-move 8s ease-in-out infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 0;
+            clip-path: polygon(20% 0, 100% 0, 85% 100%, 0 100%);
+        }
+        
+        .game-button:hover .shimmer,
+        .game-button.active-touch .shimmer {
+            opacity: 1;
+        }
+        
+        /* 泡パーティクル */
+        .hex-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.6) 0%,
+                rgba(135, 206, 250, 0.3) 50%,
+                transparent 70%);
+            border-radius: 50%;
+            animation: bubble-float 12s linear infinite;
+            pointer-events: none;
+        }
+        
+        /* 背景切り替えUI */
+        .bg-switcher {
+            position: fixed;
+            bottom: max(180px, calc(env(safe-area-inset-bottom) + 180px));
+            right: 20px;
+            z-index: 25;
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+        
+        .bg-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .bg-dot:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.2);
+        }
+        
+        .bg-dot.active {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+        
+        /* スワイプヒント */
+        .swipe-hint {
+            position: fixed;
+            bottom: max(220px, calc(env(safe-area-inset-bottom) + 220px));
+            right: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+            z-index: 24;
+            animation: fadeInOut 4s ease-in-out infinite;
+            pointer-events: none;
+            text-align: right;
+        }
+        
+        /* リップルエフェクト */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), transparent);
+            transform: scale(0);
+            animation: ripple-out 1s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        /* 波エフェクト */
+        .wave {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: wave-expand 0.8s ease-out forwards;
+        }
+        
+        /* アニメーション定義 */
+        @keyframes subtle-zoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+        
+        @keyframes sunlight {
+            0%, 100% { 
+                opacity: 0.3;
+                transform: rotate(0deg);
+            }
+            50% { 
+                opacity: 0.5;
+                transform: rotate(1deg);
+            }
+        }
+        
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: scale(1); 
+            }
+            50% { 
+                opacity: 0.6; 
+                transform: scale(1.02); 
+            }
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { 
+                opacity: 0.3;
+                transform: translateX(0);
+            }
+            50% { 
+                opacity: 0.6;
+                transform: translateX(2px);
+            }
+        }
+        
+        @keyframes pulse-icon {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes spin-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        
+        @keyframes shimmer-move {
+            0%, 100% { 
+                background-position: -200% center;
+            }
+            50% {
+                background-position: 200% center;
+            }
+        }
+        
+        @keyframes fadeInButton {
+            0% {
+                transform: translateY(12px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes bubble-float {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            5% { 
+                opacity: 0.5;
+                transform: translateY(90vh) scale(0.8);
+            }
+            95% { 
+                opacity: 0.5;
+                transform: translateY(5vh) scale(1);
+            }
+            100% {
+                transform: translateY(-10vh) scale(0.9);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes ripple-out {
+            to {
+                width: 100px;
+                height: 100px;
+                opacity: 0;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        @keyframes wave-expand {
+            to {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* レスポンシブ対応 - 改善版 */
+        @media screen and (max-width: 480px) {
+            .orbit-ring-1, .orbit-ring-2 {
+                display: none;
+            }
+            
+            .game-title {
+                font-size: 2.6rem;
+                margin-bottom: 15px;
+            }
+            
+            .subtitle {
+                font-size: 1.15rem;
+                letter-spacing: 0.15em;
+                margin-bottom: 40px;
+            }
+            
+            .game-button {
+                padding: 11px 40px 11px 50px;
+                font-size: 1.05rem;
+                width: 100%;
+                max-width: none;
+                height: 44px;
+                min-height: 40px;
+            }
+            
+            .button-wrapper {
+                height: 44px;
+            }
+            
+            .button-text {
+                font-size: 1.05rem;
+            }
+
+        }
+
+        @media screen and (max-width: 375px) {
+            .game-title {
+                font-size: 2.3rem;
+                letter-spacing: -0.02em;
+            }
+            
+            .subtitle {
+                font-size: 1.05rem;
+                letter-spacing: 0.1em;
+            }
+            
+            .game-button {
+                padding: 10px 35px 10px 45px;
+                font-size: 1rem;
+                width: 100%;
+                height: 42px;
+                min-height: 38px;
+            }
+            
+            .button-wrapper {
+                height: 42px;
+            }
+            
+            .button-text {
+                font-size: 1rem;
+            }
+        }
+
+        @media screen and (max-width: 320px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .game-button {
+                padding: 9px 30px 9px 40px;
+                font-size: 0.95rem;
+                width: 100%;
+                height: 40px;
+                min-height: 36px;
+            }
+            
+            .button-wrapper {
+                height: 40px;
+            }
+            
+            .button-text {
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* 横向き対応 */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .title-section {
+                margin-top: 5vh;
+            }
+            
+            .game-title {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+                margin-bottom: 30px;
+            }
+            
+            .button-container {
+                bottom: 20px;
+                gap: 10px;
+            }
+            
+            .game-button {
+                min-height: 50px;
+                padding: 12px 35px 12px 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景フォールバック -->
+    <div class="bg-fallback"></div>
+    
+    <!-- 背景コンテナ -->
+    <div class="bg-container" id="bgContainer">
+        <!-- 背景画像は動的に追加 -->
+    </div>
+    
+    <!-- 背景オーバーレイ -->
+    <div class="bg-overlay"></div>
+    
+    <!-- オーロラエフェクト -->
+    <div class="aurora-effect"></div>
+    
+    <!-- パーティクルコンテナ -->
+    <div id="particle-container" style="position: fixed; inset: 0; pointer-events: none; z-index: 5;"></div>
+    
+    <!-- メインコンテナ -->
+    <div class="main-container">
+        <!-- タイトル部分 -->
+        <div class="title-section">
+            <div class="title-glow"></div>
+            <h1 class="game-title">星灯のアルカディア</h1>
+            <p class="subtitle">～孤島に咲く二つの未来～</p>
+        </div>
+        
+        <!-- ボタンコンテナ -->
+        <div class="button-container">
+            <!-- 続きからボタン（上） -->
+            <div class="button-wrapper">
+                <div class="glow-ring" style="animation-delay: 1.5s; background: linear-gradient(45deg, #87CEEB, #FFB6C1, #FFD700, #98FB98);"></div>
+                <button class="game-button continue-btn" onclick="continueGame()">
+                    <div class="shimmer"></div>
+                    <div class="button-content">
+                        <span class="button-text">
+                            続きから
+                            <span class="button-underline"></span>
+                        </span>
+                    </div>
+                </button>
+                <div class="orbit-ring-1" style="animation-duration: 25s;"></div>
+                <div class="orbit-ring-2" style="animation-duration: 35s;"></div>
+            </div>
+            
+            <!-- 初めからボタン（下） -->
+            <div class="button-wrapper">
+                <div class="glow-ring"></div>
+                <button class="game-button new-game-btn" onclick="startNewGame()">
+                    <div class="shimmer"></div>
+                    <div class="button-content">
+                        <span class="button-text">
+                            初めから
+                            <span class="button-underline"></span>
+                        </span>
+                    </div>
+                </button>
+                <div class="orbit-ring-1"></div>
+                <div class="orbit-ring-2"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 背景切り替えUI -->
+    <div class="bg-switcher" id="bgSwitcher">
+        <!-- ドットは動的に追加 -->
+    </div>
+    
+    <!-- スワイプヒント -->
+    <div class="swipe-hint">← スワイプで背景切替 →</div>
+    
+    <script>
+        // 背景画像の設定（正しいファイル名に修正）
+        const backgrounds = [
+            {
+                src: '背景/haikei1.png',
+                fallback: 'linear-gradient(180deg, #87CEEB 0%, #98D8E8 50%, #E0F6FF 100%)'
+            },
+            {
+                src: '背景/haikei2.png',
+                fallback: 'linear-gradient(180deg, #FFB6C1 0%, #FFC0CB 50%, #FFDAB9 100%)'
+            },
+            {
+                src: null,
+                fallback: 'linear-gradient(180deg, #191970 0%, #4B0082 50%, #000033 100%)'
+            },
+            {
+                src: null,
+                fallback: 'linear-gradient(180deg, #FF6B6B 0%, #FF8E53 50%, #FFD93D 100%)'
+            }
+        ];
+        
+        let currentBgIndex = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // 背景の初期化
+        function initBackgrounds() {
+            const container = document.getElementById('bgContainer');
+            const switcher = document.getElementById('bgSwitcher');
+            
+            backgrounds.forEach((bg, index) => {
+                // 背景要素の作成
+                const bgDiv = document.createElement('div');
+                bgDiv.className = 'bg-image';
+                bgDiv.id = `bg-${index}`;
+                
+                if (bg.src) {
+                    // 画像の場合
+                    bgDiv.style.backgroundImage = `url('${bg.src}')`;
+                    bgDiv.style.backgroundSize = 'cover';
+                    bgDiv.style.backgroundPosition = 'center';
+                    
+                    // 画像読み込みエラー時のフォールバック
+                    const img = new Image();
+                    img.onerror = () => {
+                        console.log(`Failed to load ${bg.src}, using fallback`);
+                        bgDiv.style.backgroundImage = 'none';
+                        bgDiv.style.background = bg.fallback;
+                    };
+                    img.src = bg.src;
+                } else {
+                    // グラデーションの場合
+                    bgDiv.style.background = bg.fallback;
+                }
+                
+                if (index === 0) {
+                    bgDiv.classList.add('active');
+                }
+                
+                container.appendChild(bgDiv);
+                
+                // インジケータードットの作成
+                const dot = document.createElement('div');
+                dot.className = 'bg-dot';
+                if (index === 0) {
+                    dot.classList.add('active');
+                }
+                dot.onclick = () => switchBackground(index);
+                switcher.appendChild(dot);
+            });
+        }
+        
+        // 背景切り替え
+        function switchBackground(index) {
+            if (index === currentBgIndex) return;
+            
+            // 現在の背景を非アクティブに
+            document.getElementById(`bg-${currentBgIndex}`).classList.remove('active');
+            document.querySelectorAll('.bg-dot')[currentBgIndex].classList.remove('active');
+            
+            // 新しい背景をアクティブに
+            document.getElementById(`bg-${index}`).classList.add('active');
+            document.querySelectorAll('.bg-dot')[index].classList.add('active');
+            
+            currentBgIndex = index;
+            
+            // 設定を保存
+            localStorage.setItem('selectedBg', index);
+        }
+        
+        // 次の背景へ
+        function nextBackground() {
+            const nextIndex = (currentBgIndex + 1) % backgrounds.length;
+            switchBackground(nextIndex);
+        }
+        
+        // 前の背景へ
+        function previousBackground() {
+            const prevIndex = (currentBgIndex - 1 + backgrounds.length) % backgrounds.length;
+            switchBackground(prevIndex);
+        }
+        
+        // タッチイベントの処理
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+        
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchEndX - touchStartX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    previousBackground();
+                } else {
+                    nextBackground();
+                }
+            }
+        }
+        
+        // パーティクル生成
+        function createBubble() {
+            const particle = document.createElement('div');
+            particle.className = 'hex-particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.width = particle.style.height = (Math.random() * 20 + 8) + 'px';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particle.style.opacity = (Math.random() * 0.3 + 0.3);
+            document.getElementById('particle-container').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 25000);
+        }
+        
+        // ボタンエフェクト - 修正版
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.game-button').forEach(button => {
+                // タッチスタート
+                button.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    this.classList.add('active-touch');
+                });
+                
+                // タッチエンド
+                button.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('active-touch');
+                    
+                    // リップルエフェクト
+                    for(let i = 0; i < 3; i++) {
+                        setTimeout(() => {
+                            const ripple = document.createElement('div');
+                            ripple.style.position = 'absolute';
+                            ripple.style.width = '20px';
+                            ripple.style.height = '20px';
+                            ripple.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8), transparent)';
+                            ripple.style.borderRadius = '50%';
+                            ripple.style.left = (Math.random() * 100) + '%';
+                            ripple.style.top = (Math.random() * 100) + '%';
+                            ripple.style.pointerEvents = 'none';
+                            ripple.style.animation = 'ripple-out 1s ease-out forwards';
+                            this.appendChild(ripple);
+                            setTimeout(() => ripple.remove(), 1000);
+                        }, i * 100);
+                    }
+                });
+                
+                // マウスダウン（デスクトップ用）
+                button.addEventListener('mousedown', function() {
+                    this.classList.add('active-touch');
+                });
+                
+                // マウスアップ（デスクトップ用）
+                button.addEventListener('mouseup', function() {
+                    this.classList.remove('active-touch');
+                });
+                
+                // マウスリーブ（デスクトップ用）
+                button.addEventListener('mouseleave', function() {
+                    this.classList.remove('active-touch');
+                });
+                
+                // クリックエフェクト
+                button.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const wave = document.createElement('div');
+                    wave.className = 'wave';
+                    wave.style.left = x + 'px';
+                    wave.style.top = y + 'px';
+                    wave.style.width = '10px';
+                    wave.style.height = '10px';
+                    this.appendChild(wave);
+                    setTimeout(() => wave.remove(), 800);
+                    
+                    // バイブレーション
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                });
+            });
+        });
+        
+        // ゲーム関数
+        function startNewGame() {
+            console.log('初めからボタンがクリックされました');
+            document.body.style.transition = 'opacity 1s ease-out, filter 1s ease-out';
+            document.body.style.opacity = '0';
+            document.body.style.filter = 'blur(10px)';
+            setTimeout(() => {
+                alert('星灯のアルカディア - 夏の島で新たな物語が始まります');
+                document.body.style.opacity = '1';
+                document.body.style.filter = 'none';
+            }, 1000);
+        }
+        
+        function continueGame() {
+            console.log('続きからボタンがクリックされました');
+            document.body.style.transition = 'opacity 1s ease-out, filter 1s ease-out';
+            document.body.style.opacity = '0';
+            document.body.style.filter = 'blur(10px)';
+            setTimeout(() => {
+                const saveData = localStorage.getItem('gameData');
+                if (!saveData) {
+                    alert('セーブデータがありません');
+                } else {
+                    alert('星灯のアルカディア - 続きから物語を紡ぎます');
+                }
+                document.body.style.opacity = '1';
+                document.body.style.filter = 'none';
+            }, 1000);
+        }
+        
+        // 初期化
+        window.addEventListener('load', () => {
+            const buttonContainer = document.querySelector('.button-container');
+            if (buttonContainer) {
+                buttonContainer.classList.add('loaded');
+            }
+            
+            // 背景初期化
+            initBackgrounds();
+            
+            // 保存された背景を復元
+            const savedBg = localStorage.getItem('selectedBg');
+            if (savedBg !== null) {
+                switchBackground(parseInt(savedBg));
+            }
+            
+            // スワイプイベント
+            document.addEventListener('touchstart', handleTouchStart, { passive: true });
+            document.addEventListener('touchend', handleTouchEnd, { passive: true });
+            
+            // パーティクル生成
+            setInterval(createBubble, 2000);
+            
+            // 初期アニメーション
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 2s ease-in';
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            // タイトルのレスポンシブ調整
+            function adjustTitleSize() {
+                const title = document.querySelector('.game-title');
+                const subtitle = document.querySelector('.subtitle');
+                if (title) {
+                    const containerWidth = window.innerWidth;
+                    
+                    // 画面幅に基づいて最適なフォントサイズを計算
+                    let titleSize, subtitleSize;
+                    
+                    if (containerWidth <= 320) {
+                        titleSize = '2rem';
+                        subtitleSize = '0.95rem';
+                    } else if (containerWidth <= 375) {
+                        titleSize = '2.3rem';
+                        subtitleSize = '1.05rem';
+                    } else if (containerWidth <= 480) {
+                        titleSize = '2.6rem';
+                        subtitleSize = '1.15rem';
+                    } else if (containerWidth <= 640) {
+                        titleSize = '3rem';
+                        subtitleSize = '1.25rem';
+                    } else if (containerWidth <= 768) {
+                        titleSize = '3.5rem';
+                        subtitleSize = '1.4rem';
+                    } else {
+                        titleSize = '6rem';
+                        subtitleSize = '1.8rem';
+                    }
+                    
+                    title.style.fontSize = titleSize;
+                    if (subtitle) {
+                        subtitle.style.fontSize = subtitleSize;
+                    }
+                    
+                    // タイトルが1行に収まるように調整
+                    setTimeout(() => {
+                        const titleWidth = title.scrollWidth;
+                        if (titleWidth > containerWidth * 0.9) {
+                            const currentSize = parseFloat(window.getComputedStyle(title).fontSize);
+                            const newSize = (currentSize * containerWidth * 0.9) / titleWidth;
+                            title.style.fontSize = newSize + 'px';
+                            
+                            // サブタイトルも比例して調整
+                            if (subtitle) {
+                                subtitle.style.fontSize = (newSize * 0.3) + 'px';
+                            }
+                        }
+                    }, 50);
+                }
+            }
+            
+            // 初期調整とリサイズ時の再調整
+            adjustTitleSize();
+            window.addEventListener('resize', adjustTitleSize);
+            window.addEventListener('orientationchange', adjustTitleSize);
+        });
+        
+        // ビューポート高さの修正（iOS対策）
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', setViewportHeight);
+    </script>
+</body>
+</html>

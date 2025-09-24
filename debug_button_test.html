@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボタンCSS調査ページ</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: sans-serif;
+            background: #87CEEB;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        h2 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        /* オリジナルのボタンスタイル（完全コピー） */
+        .game-button {
+            position: relative;
+            padding: 18px 40px 18px 50px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: none;
+            border-radius: 12px;
+            color: #00CED1;
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            z-index: 1000;
+            font-family: 'Noto Serif JP', serif;
+            width: 60vw;
+            max-width: 280px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+            transform: translateX(30px);
+            margin-left: auto;
+            margin-right: -30px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* テスト1: シンプルなボタン */
+        .simple-button {
+            padding: 15px 30px;
+            background: white;
+            color: #00CED1;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        /* テスト2: clip-pathなしのボタン */
+        .no-clip-button {
+            position: relative;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.85) 100%);
+            border: none;
+            border-radius: 12px;
+            color: #00CED1;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* テスト3: transformなしのボタン */
+        .no-transform-button {
+            position: relative;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.95) 0%, 
+                rgba(255, 255, 255, 0.85) 100%);
+            border: none;
+            border-radius: 12px;
+            color: #00CED1;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+        }
+        
+        /* デバッグ用の強調表示 */
+        .debug-border {
+            border: 3px solid red !important;
+        }
+        
+        .status {
+            color: white;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white;">ボタンCSS問題調査</h1>
+    
+    <div class="test-section">
+        <h2>テスト1: シンプルなボタン（基本確認）</h2>
+        <button class="simple-button">シンプルボタン</button>
+        <div class="status">基本的なCSSが適用されるか確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト2: オリジナルのgame-buttonクラス</h2>
+        <button class="game-button">オリジナルボタン</button>
+        <div class="status">完全なスタイルが適用されるか確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト3: clip-pathなし</h2>
+        <button class="no-clip-button">Clip-pathなしボタン</button>
+        <div class="status">clip-pathが問題の原因か確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト4: transformなし</h2>
+        <button class="no-transform-button">Transformなしボタン</button>
+        <div class="status">transformが問題の原因か確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト5: インラインスタイル</h2>
+        <button style="padding: 18px 40px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%); border: none; border-radius: 12px; color: #00CED1; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);">
+            インラインスタイルボタン
+        </button>
+        <div class="status">インラインスタイルなら適用されるか確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト6: !importantを使用</h2>
+        <button class="game-button" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%) !important; color: #00CED1 !important;">
+            !importantボタン
+        </button>
+        <div class="status">!importantで強制適用されるか確認</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>テスト7: 要素の計算済みスタイル確認</h2>
+        <button class="game-button" id="debug-button">デバッグ用ボタン</button>
+        <div id="computed-styles" style="color: white; margin-top: 10px; font-size: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;"></div>
+    </div>
+    
+    <script>
+        // 計算済みスタイルを表示
+        window.addEventListener('load', function() {
+            const debugBtn = document.getElementById('debug-button');
+            const computedDiv = document.getElementById('computed-styles');
+            
+            if (debugBtn) {
+                const styles = window.getComputedStyle(debugBtn);
+                const importantStyles = [
+                    'background',
+                    'color',
+                    'padding',
+                    'border-radius',
+                    'clip-path',
+                    'transform',
+                    'display',
+                    'position'
+                ];
+                
+                let output = '<strong>計算済みスタイル:</strong><br>';
+                importantStyles.forEach(prop => {
+                    output += `${prop}: ${styles.getPropertyValue(prop)}<br>`;
+                });
+                
+                computedDiv.innerHTML = output;
+            }
+            
+            // すべてのボタンにクリックイベントを追加
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('ボタンがクリックされました: ' + this.innerText);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

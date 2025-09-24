@@ -1,0 +1,11 @@
+{
+  "name": "uigame-test",
+  "version": "1.0.0",
+  "description": "Testing UI game HTML rendering",
+  "scripts": {
+    "test": "node test-css.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1"
+  }
+}
