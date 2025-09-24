@@ -13,8 +13,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400;1,500&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
         
         * {
             margin: 0;
@@ -86,7 +84,7 @@
             z-index: -1;
         }
         
-        /* 背景オーバーレイ */
+        /* 背景オーバーレイ - 控えめな雰囲気 */
         .bg-overlay {
             position: fixed;
             top: 0;
@@ -101,52 +99,54 @@
             pointer-events: none;
         }
         
-        /* オーロラエフェクト */
-        .aurora-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at 50% -50%, rgba(135, 206, 235, 0.1), transparent 70%);
-            animation: sunlight 15s ease-in-out infinite;
-            z-index: 2;
-            pointer-events: none;
+        @keyframes subtle-zoom {
+            0% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1.15);
+            }
         }
         
         /* メインコンテナ */
         .main-container {
             position: relative;
+            width: 100%;
             height: 100vh;
             height: 100dvh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            padding: 20px;
+            z-index: 2;
+            padding: 10px;
         }
         
-        /* タイトルセクション */
+        /* タイトル装飾グロー */
         .title-section {
-            text-align: center;
             position: relative;
+            text-align: center;
+            margin-bottom: 60px;
             width: 100%;
-            margin-bottom: 120px;
         }
         
-        /* タイトル背景のグロー効果 */
         .title-glow {
             position: absolute;
-            inset: -80px;
-            background: radial-gradient(circle, rgba(135, 206, 250, 0.05), transparent 60%);
-            filter: blur(60px);
-            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 150%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.15) 0%,
+                transparent 60%);
+            filter: blur(40px);
+            z-index: -1;
         }
         
-        /* タイトルスタイル */
+        /* タイトルスタイル - サイズを調整して切れないように */
         .game-title {
-            font-size: clamp(3rem, 13vw, 7.5rem);
+            font-size: clamp(1.8rem, 8vw, 5rem);
             font-weight: 800;
             font-family: 'Kaisei Decol', 'Shippori Mincho', serif;
             background: linear-gradient(90deg,
@@ -157,335 +157,306 @@
                 #2d5a7b 60%,
                 #006666 80%,
                 #004d4d 100%);
-            background-size: 300% auto;
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shine 12s linear infinite, float 15s ease-in-out infinite;
-            text-shadow: 0 0 30px rgba(0, 100, 150, 0.3);
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25))
-                    drop-shadow(0 0 20px rgba(0, 100, 150, 0.3));
-            margin-bottom: 30px;
-            white-space: nowrap;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.02em;
+            text-shadow: 
+                1px 1px 2px rgba(0, 77, 77, 0.2),
+                2px 2px 4px rgba(0, 102, 102, 0.1),
+                -1px -1px 2px rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
             padding: 0 20px;
-            display: block;
-            letter-spacing: 0.08em;
-        }
-        
-        @keyframes shine {
-            0% { background-position: 0% center; }
-            100% { background-position: 300% center; }
-        }
-        
-        .subtitle {
-            font-size: clamp(1.4rem, 6vw, 2.4rem);
-            font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
-            background: linear-gradient(90deg,
-                rgba(10, 50, 90, 0.95) 0%,
-                rgba(30, 70, 110, 0.98) 50%,
-                rgba(10, 50, 90, 0.95) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.35em;
-            font-weight: 500;
-            text-shadow: 0 0 20px rgba(0, 40, 80, 0.5), 
-                         0 4px 8px rgba(0, 0, 0, 0.35);
-            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.25));
-            margin-bottom: 0;
+            line-height: 1.2;
             white-space: nowrap;
-            padding: 8px 15px;
-            position: relative;
-        }
-        
-        /* Tap to Startセクション - モバイル最適化 */
-        .tap-start-container {
-            position: relative;
-            padding: 80px 60px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            -webkit-tap-highlight-color: rgba(135, 206, 250, 0.2);
-        }
-        
-        .tap-start-container:active {
             transform: scale(0.95);
         }
         
-        /* 装飾的な枠 */
-        .decorative-frame {
-            position: absolute;
-            inset: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            pointer-events: none;
-            animation: frame-pulse 3s ease-in-out infinite;
-        }
-        
-        .decorative-frame::before,
-        .decorative-frame::after {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .decorative-frame::before {
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
-        }
-        
-        .decorative-frame::after {
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
-        }
-        
-        /* メインテキスト - モバイル向け調整 */
-        .tap-text {
-            font-family: 'Cinzel Decorative', 'Playfair Display', 'Cormorant Garamond', serif;
-            font-size: clamp(1.5rem, 6vw, 2.8rem);
-            font-weight: 700;
-            font-style: italic;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            position: relative;
-            z-index: 2;
-            white-space: nowrap;
-            /* 美しいグラデーション */
-            background: linear-gradient(135deg,
-                #ffffff 0%,
-                #e0f7ff 25%,
-                #b8e6ff 50%,
-                #e0f7ff 75%,
-                #ffffff 100%);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient-flow 4s ease-in-out infinite;
-            /* 多層シャドウ */
+        /* サブタイトル - 濃い色で視認性向上 */
+        .subtitle {
+            font-size: clamp(1rem, 3.5vw, 1.5rem);
+            font-weight: 600;
+            font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
+            color: #003d3d;
+            letter-spacing: 0.2em;
             text-shadow: 
-                0 0 40px rgba(135, 206, 250, 0.6),
-                0 0 60px rgba(135, 206, 250, 0.4),
-                0 0 80px rgba(135, 206, 250, 0.2);
-            filter: 
-                drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2))
-                drop-shadow(0 4px 8px rgba(0, 50, 100, 0.3))
-                drop-shadow(0 0 30px rgba(135, 206, 250, 0.5));
+                1px 1px 2px rgba(255, 255, 255, 0.6),
+                2px 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0.95;
         }
         
-        /* 装飾的なライン - モバイル対応 */
+        /* Tap to Startコンテナ */
+        .tap-start-container {
+            position: relative;
+            padding: 40px 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tap-start-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .tap-start-container:active {
+            transform: scale(0.98);
+        }
+        
+        /* 装飾的な線 */
         .decoration-line {
             position: absolute;
-            height: 1px;
-            width: 60px;
-            background: linear-gradient(90deg, 
-                transparent 0%,
-                rgba(255, 255, 255, 0.6) 50%,
-                transparent 100%);
             top: 50%;
-            animation: line-extend 3s ease-in-out infinite;
-            display: none; /* モバイルでは非表示 */
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            animation: shimmer 3s ease-in-out infinite;
         }
         
-        @media screen and (min-width: 768px) {
-            .decoration-line {
-                display: block;
-                width: 100px;
-            }
-            
-            .decoration-line.left {
-                left: -120px;
-                transform: translateY(-50%);
-            }
-            
-            .decoration-line.right {
-                right: -120px;
-                transform: translateY(-50%);
-            }
+        .decoration-line.left {
+            left: -100px;
+            transform: translateY(-50%);
         }
         
-        /* キラキラエフェクト */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            animation: sparkle-anim 2s ease-in-out infinite;
+        .decoration-line.right {
+            right: -100px;
+            transform: translateY(-50%);
         }
         
-        .sparkle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
-        .sparkle:nth-child(2) { top: 80%; right: 10%; animation-delay: 0.5s; }
-        .sparkle:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 1s; }
-        .sparkle:nth-child(4) { top: 50%; right: 15%; animation-delay: 1.5s; }
-        
-        /* パルスリング - 削除 */
-        
-        /* 泡パーティクル */
-        .hex-particle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, 
-                rgba(255, 255, 255, 0.6) 0%,
-                rgba(135, 206, 250, 0.3) 50%,
-                transparent 70%);
-            border-radius: 50%;
-            animation: bubble-float 12s linear infinite;
-            pointer-events: none;
-        }
-        
-        /* アニメーション定義 */
-        @keyframes subtle-zoom {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.03); }
-        }
-        
-        @keyframes sunlight {
-            0%, 100% { 
-                opacity: 0.3;
-                transform: rotate(0deg);
-            }
-            50% { 
-                opacity: 0.5;
-                transform: rotate(1deg);
-            }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes gradient-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes frame-pulse {
-            0%, 100% { 
-                opacity: 0.3;
-                transform: scale(1);
-            }
-            50% { 
-                opacity: 0.6;
-                transform: scale(1.02);
-            }
-        }
-        
-        @keyframes line-extend {
-            0%, 100% { 
-                transform: translateY(-50%) scaleX(1);
-                opacity: 0.5;
-            }
-            50% { 
-                transform: translateY(-50%) scaleX(1.5);
-                opacity: 0.8;
-            }
-        }
-        
-        @keyframes sparkle-anim {
+        @keyframes shimmer {
             0%, 100% {
-                opacity: 0;
-                transform: scale(0);
+                opacity: 0.3;
+                transform: translateY(-50%) scaleX(0.8);
             }
             50% {
                 opacity: 1;
-                transform: scale(1);
+                transform: translateY(-50%) scaleX(1.2);
             }
         }
         
+        /* Tap to Startテキスト */
+        .tap-text {
+            font-family: 'Cinzel Decorative', 'Kaisei Decol', serif;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg,
+                #FFD700 0%,
+                #FFA500 25%,
+                #FF6347 50%,
+                #FFA500 75%,
+                #FFD700 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-shadow: 
+                2px 2px 4px rgba(255, 215, 0, 0.3),
+                -2px -2px 4px rgba(255, 99, 71, 0.3);
+            animation: text-glow 2s ease-in-out infinite alternate;
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+        }
         
-        @keyframes bubble-float {
+        @keyframes text-glow {
             0% {
-                transform: translateY(100vh) scale(0.5);
-                opacity: 0;
-            }
-            5% { 
-                opacity: 0.5;
-                transform: translateY(90vh) scale(0.8);
-            }
-            95% { 
-                opacity: 0.5;
-                transform: translateY(5vh) scale(1);
+                filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5))
+                        drop-shadow(0 0 20px rgba(255, 140, 0, 0.3));
             }
             100% {
-                transform: translateY(-10vh) scale(0.9);
-                opacity: 0;
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8))
+                        drop-shadow(0 0 30px rgba(255, 99, 71, 0.5))
+                        drop-shadow(0 0 40px rgba(255, 140, 0, 0.3));
             }
         }
         
-        /* フェードトランジション */
-        .fade-out {
-            animation: fadeOut 1s ease-out forwards;
+        /* 点滅アニメーション */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
         
-        @keyframes fadeOut {
+        .tap-text {
+            animation: text-glow 2s ease-in-out infinite alternate,
+                      pulse 3s ease-in-out infinite;
+        }
+        
+        /* 泡パーティクル */
+        .hex-particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.9),
+                rgba(135, 206, 235, 0.4));
+            box-shadow: 
+                inset -2px -2px 4px rgba(0, 0, 0, 0.1),
+                0 0 8px rgba(255, 255, 255, 0.5);
+            animation: float-up 4s ease-out forwards;
+        }
+        
+        @keyframes float-up {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) scale(0);
+            }
+            10% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) translateX(var(--drift)) scale(0.3);
+            }
+        }
+        
+        /* クリックリップルエフェクト */
+        .ripple {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+            animation: ripple-expand 0.8s ease-out forwards;
+        }
+        
+        @keyframes ripple-expand {
             to {
+                transform: scale(4);
                 opacity: 0;
-                filter: blur(10px);
             }
         }
         
-        /* モバイル最適化 */
-        @media screen and (max-width: 480px) {
-            .tap-start-container {
-                padding: 60px 40px;
+        /* レスポンシブデザイン */
+        @media screen and (max-width: 768px) {
+            .game-title {
+                font-size: clamp(1.6rem, 7vw, 3.5rem);
+                letter-spacing: 0.01em;
+                transform: scale(0.9);
+            }
+            
+            .subtitle {
+                font-size: clamp(0.9rem, 3vw, 1.2rem);
+                letter-spacing: 0.15em;
             }
             
             .tap-text {
-                font-size: 1.4rem;
+                font-size: clamp(1.3rem, 4.5vw, 2rem);
                 letter-spacing: 0.1em;
             }
             
-            .decorative-frame {
-                inset: 15px;
+            .decoration-line {
+                width: 60px;
             }
             
-            .sparkle {
-                width: 3px;
-                height: 3px;
+            .decoration-line.left {
+                left: -80px;
+            }
+            
+            .decoration-line.right {
+                right: -80px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .game-title {
+                font-size: clamp(1.5rem, 6.5vw, 3rem);
+                letter-spacing: 0;
+                transform: scale(0.85);
+                padding: 0 10px;
+            }
+            
+            .subtitle {
+                font-size: clamp(0.85rem, 2.8vw, 1.1rem);
+                letter-spacing: 0.1em;
+            }
+            
+            .tap-text {
+                font-size: clamp(1.2rem, 4vw, 1.8rem);
+                letter-spacing: 0.08em;
+            }
+            
+            .decoration-line {
+                width: 50px;
+            }
+            
+            .decoration-line.left {
+                left: -70px;
+            }
+            
+            .decoration-line.right {
+                right: -70px;
             }
         }
         
         @media screen and (max-width: 375px) {
-            .tap-text {
-                font-size: 1.3rem;
+            .game-title {
+                font-size: clamp(1.4rem, 6vw, 2.5rem);
+                transform: scale(0.8);
+            }
+            
+            .subtitle {
+                font-size: clamp(0.8rem, 2.5vw, 1rem);
                 letter-spacing: 0.08em;
+            }
+            
+            .tap-text {
+                font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+            }
+            
+            .decoration-line {
+                display: none;
+            }
+        }
+        
+        @media screen and (max-width: 320px) {
+            .game-title {
+                font-size: 1.3rem;
+                transform: scale(0.75);
+            }
+            
+            .subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .tap-text {
+                font-size: 1rem;
+            }
+        }
+        
+        /* 横向きモード */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            .title-section {
+                margin-bottom: 30px;
+            }
+            
+            .game-title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 20px;
+            }
+            
+            .tap-text {
+                font-size: 1.6rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 背景フォールバック -->
+    <!-- 背景レイヤー -->
     <div class="bg-fallback"></div>
-    
-    <!-- 背景コンテナ -->
-    <div class="bg-container" id="bgContainer">
-        <!-- 背景画像は動的に追加 -->
-    </div>
-    
-    <!-- 背景オーバーレイ -->
+    <div class="bg-container" id="bgContainer"></div>
     <div class="bg-overlay"></div>
     
-    <!-- オーロラエフェクト -->
-    <div class="aurora-effect"></div>
-    
-    <!-- パーティクルコンテナ -->
-    <div id="particle-container" style="position: fixed; inset: 0; pointer-events: none; z-index: 5;"></div>
-    
-    <!-- メインコンテナ -->
-    <div class="main-container" id="mainContainer">
-        <!-- タイトル部分 -->
+    <!-- メインコンテンツ -->
+    <div class="main-container">
+        <!-- タイトルセクション -->
         <div class="title-section">
             <div class="title-glow"></div>
             <h1 class="game-title">星灯のアルカディア</h1>
@@ -493,149 +464,156 @@
         </div>
         
         <!-- Tap to Start -->
-        <div class="tap-start-container" id="tapStart">
-            <!-- 装飾的な枠 -->
-            <div class="decorative-frame"></div>
-            
-            <!-- 装飾ライン -->
+        <div class="tap-start-container" onclick="startGame()">
             <div class="decoration-line left"></div>
-            <div class="decoration-line right"></div>
-            
-            <!-- キラキラ -->
-            <div class="sparkle"></div>
-            <div class="sparkle"></div>
-            <div class="sparkle"></div>
-            <div class="sparkle"></div>
-            
-            <!-- テキスト -->
             <div class="tap-text">Tap to Start</div>
+            <div class="decoration-line right"></div>
         </div>
     </div>
     
     <script>
-        // 背景画像の設定
-        const backgrounds = [
-            {
-                src: '背景/haikei1.png',
-                fallback: 'linear-gradient(180deg, #87CEEB 0%, #98D8E8 50%, #E0F6FF 100%)'
-            },
-            {
-                src: '背景/haikei2.png',
-                fallback: 'linear-gradient(180deg, #FFB6C1 0%, #FFC0CB 50%, #FFDAB9 100%)'
-            },
-            {
-                src: null,
-                fallback: 'linear-gradient(180deg, #191970 0%, #4B0082 50%, #000033 100%)'
-            },
-            {
-                src: null,
-                fallback: 'linear-gradient(180deg, #FF6B6B 0%, #FF8E53 50%, #FFD93D 100%)'
-            }
-        ];
-        
-        let currentBgIndex = 0;
+        // 背景画像の設定（haikei2.pngのみ使用）
+        const backgroundImage = '背景/haikei2.png';
+        const backgroundFallback = 'linear-gradient(180deg, #87CEEB 0%, #98D8E8 50%, #E0F6FF 100%)';
         
         // 背景の初期化
-        function initBackgrounds() {
+        function initBackground() {
             const container = document.getElementById('bgContainer');
             
-            backgrounds.forEach((bg, index) => {
-                const bgDiv = document.createElement('div');
-                bgDiv.className = 'bg-image';
-                bgDiv.id = `bg-${index}`;
-                
-                if (bg.src) {
-                    bgDiv.style.backgroundImage = `url('${bg.src}')`;
-                    bgDiv.style.backgroundSize = 'cover';
-                    bgDiv.style.backgroundPosition = 'center';
-                    
-                    const img = new Image();
-                    img.onerror = () => {
-                        bgDiv.style.backgroundImage = 'none';
-                        bgDiv.style.background = bg.fallback;
-                    };
-                    img.src = bg.src;
-                } else {
-                    bgDiv.style.background = bg.fallback;
-                }
-                
-                if (index === 0) {
-                    bgDiv.classList.add('active');
-                }
-                
+            const bgDiv = document.createElement('div');
+            bgDiv.className = 'bg-image active';
+            bgDiv.style.backgroundImage = `url('${backgroundImage}')`;
+            bgDiv.style.backgroundSize = 'cover';
+            bgDiv.style.backgroundPosition = 'center';
+            
+            // 画像読み込みエラー時のフォールバック
+            const img = new Image();
+            img.onload = function() {
                 container.appendChild(bgDiv);
-            });
+            };
+            img.onerror = function() {
+                bgDiv.style.background = backgroundFallback;
+                container.appendChild(bgDiv);
+            };
+            img.src = backgroundImage;
         }
         
-        // パーティクル生成
-        function createBubble() {
-            const particle = document.createElement('div');
-            particle.className = 'hex-particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.width = particle.style.height = (Math.random() * 20 + 8) + 'px';
-            particle.style.animationDelay = Math.random() * 8 + 's';
-            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-            particle.style.opacity = (Math.random() * 0.3 + 0.3);
-            document.getElementById('particle-container').appendChild(particle);
+        // ゲーム開始関数
+        function startGame() {
+            console.log('ゲームを開始します');
             
-            setTimeout(() => particle.remove(), 25000);
-        }
-        
-        // Tap to Start ハンドラー
-        function handleTapStart() {
-            const mainContainer = document.getElementById('mainContainer');
-            mainContainer.classList.add('fade-out');
+            // フェードアウトエフェクト
+            document.body.style.transition = 'opacity 1s ease-out, filter 1s ease-out';
+            document.body.style.opacity = '0';
+            document.body.style.filter = 'blur(10px)';
             
-            // バイブレーション
-            if (navigator.vibrate) {
-                navigator.vibrate([50, 30, 50]);
+            // リップルエフェクト生成
+            for(let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const ripple = document.createElement('div');
+                    ripple.className = 'ripple';
+                    ripple.style.left = '50%';
+                    ripple.style.top = '50%';
+                    ripple.style.width = '100px';
+                    ripple.style.height = '100px';
+                    ripple.style.marginLeft = '-50px';
+                    ripple.style.marginTop = '-50px';
+                    document.body.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 800);
+                }, i * 100);
             }
             
             setTimeout(() => {
-                // ここでメインメニューや次の画面に遷移
-                console.log('ゲームを開始します...');
-                // 実際の実装では、ここでメニュー画面を表示
-                showMainMenu();
+                alert('星灯のアルカディア - 夏の島で新たな物語が始まります');
+                document.body.style.opacity = '1';
+                document.body.style.filter = 'none';
             }, 1000);
         }
         
-        // メインメニュー表示（仮実装）
-        function showMainMenu() {
-            document.body.innerHTML = `
-                <div style="position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);">
-                    <h2 style="font-size: 2rem; color: #004d4d; margin-bottom: 40px; font-family: 'Kaisei Decol', serif;">メインメニュー</h2>
-                    <button onclick="alert('新しいゲームを開始')" style="padding: 15px 40px; margin: 10px; font-size: 1.2rem; background: rgba(255,255,255,0.8); border: none; border-radius: 10px; cursor: pointer;">はじめから</button>
-                    <button onclick="alert('セーブデータから続ける')" style="padding: 15px 40px; margin: 10px; font-size: 1.2rem; background: rgba(255,255,255,0.8); border: none; border-radius: 10px; cursor: pointer;">つづきから</button>
-                    <button onclick="location.reload()" style="padding: 15px 40px; margin: 10px; font-size: 1.2rem; background: rgba(255,255,255,0.8); border: none; border-radius: 10px; cursor: pointer;">タイトルに戻る</button>
-                </div>
-            `;
+        // タッチイベントの処理
+        function initTouch() {
+            const tapContainer = document.querySelector('.tap-start-container');
+            
+            if (tapContainer) {
+                // タッチスタート
+                tapContainer.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                // タッチエンド
+                tapContainer.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.style.transform = 'scale(1)';
+                });
+                
+                // クリックエフェクト
+                tapContainer.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // リップルエフェクト
+                    const ripple = document.createElement('div');
+                    ripple.className = 'ripple';
+                    ripple.style.left = e.clientX + 'px';
+                    ripple.style.top = e.clientY + 'px';
+                    ripple.style.width = '20px';
+                    ripple.style.height = '20px';
+                    ripple.style.marginLeft = '-10px';
+                    ripple.style.marginTop = '-10px';
+                    document.body.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 800);
+                });
+            }
+        }
+        
+        // パーティクル生成
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'hex-particle';
+            
+            const size = Math.random() * 15 + 10;
+            const startX = Math.random() * window.innerWidth;
+            const drift = (Math.random() - 0.5) * 100;
+            
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = startX + 'px';
+            particle.style.bottom = '-20px';
+            particle.style.setProperty('--drift', drift + 'px');
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 4000);
         }
         
         // 初期化
         window.addEventListener('load', () => {
-            // 背景初期化
-            initBackgrounds();
+            initBackground();
+            initTouch();
             
-            // パーティクル生成
-            setInterval(createBubble, 2000);
+            // パーティクル定期生成 - 500msごとに生成
+            setInterval(createParticle, 500);
             
-            // Tap to Start イベント
-            const tapStart = document.getElementById('tapStart');
-            tapStart.addEventListener('click', handleTapStart);
-            tapStart.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                handleTapStart();
-            });
-            
-            // 初期アニメーション
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                document.body.style.transition = 'opacity 2s ease-in';
-                document.body.style.opacity = '1';
-            }, 100);
+            // 初期パーティクル - すぐに10個生成
+            for(let i = 0; i < 10; i++) {
+                setTimeout(createParticle, i * 200);
+            }
         });
         
-        // ビューポート高さの修正（iOS対策）
+        // リサイズ時の処理
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // 必要に応じてレイアウト調整
+            }, 250);
+        });
+        
+        // ビューポート高さの修正（モバイルブラウザ対応）
         function setViewportHeight() {
             const vh = window.innerHeight * 0.01;
             document.documentElement.style.setProperty('--vh', `${vh}px`);
