@@ -9,6 +9,10 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-title" content="星灯のアルカディア">
     <title>星灯のアルカディア - ノベルゲーム</title>
+    <!-- Modern Animation Libraries 2025 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- AOS (Animate On Scroll) for modern scroll effects -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&display=swap');
@@ -61,7 +65,6 @@
             opacity: 0;
             transition: opacity 0.8s ease-in-out;
             filter: saturate(1.1);
-            animation: subtle-zoom 20s ease-in-out infinite alternate;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -103,15 +106,6 @@
             pointer-events: none;
         }
         
-        @keyframes subtle-zoom {
-            0% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1.15);
-            }
-        }
-        
         @keyframes shine {
             0% { background-position: 0% center; }
             100% { background-position: 300% center; }
@@ -120,6 +114,30 @@
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
+        }
+        
+        /* Version Info - プロゲーム仕様 */
+        .version-info {
+            position: absolute;
+            bottom: 5vh;
+            left: 5vw;
+            font-family: 'Noto Serif JP', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+        }
+        
+        /* Copyright - プロゲーム仕様 */
+        .copyright {
+            position: absolute;
+            bottom: 5vh;
+            right: 5vw;
+            font-family: 'Noto Serif JP', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            z-index: 5;
         }
         
         /* メインコンテナ */
@@ -132,71 +150,174 @@
             z-index: 2;
         }
         
-        /* タイトル装飾グロー - 黄金比位置 */
+        /* タイトル装飾グロー - 黄金比位置 (0.382) */
         .title-section {
             position: absolute;
-            top: 30%;
+            top: 38.2%; /* ロゴの中心を黄金比位置に配置 */
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%); /* 中心を基準に配置 */
             text-align: center;
-            width: 100%;
+            z-index: 5;
         }
         
-        .title-glow {
+        /* ロゴコンテナ - 黄金比サイズ */
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            width: min(61.8vw, 500px); /* 画面幅の黄金比 */
+            max-width: 500px;
+            animation: floatLogo 6s ease-in-out infinite;
+        }
+        
+        /* ロゴ画像スタイル */
+        .game-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 8px 20px rgba(26, 188, 156, 0.3))
+                    drop-shadow(0 4px 10px rgba(52, 152, 219, 0.2))
+                    drop-shadow(0 0 40px rgba(255, 215, 0, 0.15));
+            animation: logoGlow 4s ease-in-out infinite alternate;
+            transition: transform 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        
+        /* ホバーエフェクト */
+        .game-logo:hover {
+            transform: scale(1.02) rotate(0.5deg);
+            filter: drop-shadow(0 12px 30px rgba(26, 188, 156, 0.5))
+                    drop-shadow(0 6px 15px rgba(52, 152, 219, 0.4))
+                    drop-shadow(0 0 60px rgba(255, 215, 0, 0.3))
+                    brightness(1.1);
+        }
+        
+        /* ロゴのグロー背景 */
+        .logo-glow {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 120%;
-            height: 150%;
+            width: 150%;
+            height: 200%;
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle at center,
-                rgba(255, 255, 255, 0.15) 0%,
-                transparent 60%);
-            filter: blur(40px);
+            background: radial-gradient(ellipse at center,
+                rgba(26, 188, 156, 0.1) 0%,
+                rgba(52, 152, 219, 0.05) 30%,
+                transparent 70%);
+            filter: blur(60px);
             z-index: -1;
+            animation: pulseGlow 3s ease-in-out infinite;
         }
         
-        /* タイトルスタイル - 大きく濃い色で視認性向上 */
-        .game-title {
-            font-size: clamp(2rem, 9vw, 4rem);
-            font-weight: 800;
-            font-family: 'Kaisei Decol', 'Shippori Mincho', serif;
+        /* 波紋エフェクト - ロゴの波模様に調和 */
+        .logo-wave {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 40px;
             background: linear-gradient(90deg,
-                #004d4d 0%,
-                #006666 20%,
-                #2d5a7b 40%,
-                #4a708b 50%,
-                #2d5a7b 60%,
-                #006666 80%,
-                #004d4d 100%);
-            background-size: 300% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shine 12s linear infinite;
-            text-shadow: 0 0 30px rgba(0, 100, 150, 0.3);
-            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25))
-                    drop-shadow(0 0 20px rgba(0, 100, 150, 0.3));
-            margin-bottom: 15px;
-            white-space: nowrap;
-            padding: 0 20px;
-            display: block;
-            letter-spacing: 0.05em;
-            overflow: visible;
-            transform: none;
+                transparent,
+                rgba(26, 188, 156, 0.25),
+                rgba(72, 219, 251, 0.3),
+                rgba(52, 152, 219, 0.25),
+                transparent);
+            filter: blur(8px);
+            animation: waveMotion 8s linear infinite;
+            opacity: 0.7;
+            border-radius: 50%;
         }
         
-        /* サブタイトル - 濃い色で視認性向上 */
+        /* 追加の波エフェクト */
+        .logo-wave::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            animation: waveMotion 8s linear infinite reverse;
+            animation-delay: -4s;
+            opacity: 0.5;
+        }
+        
+        /* ロゴアニメーション */
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes logoGlow {
+            0% { 
+                filter: drop-shadow(0 8px 20px rgba(26, 188, 156, 0.3))
+                        drop-shadow(0 4px 10px rgba(52, 152, 219, 0.2))
+                        drop-shadow(0 0 40px rgba(255, 215, 0, 0.15));
+            }
+            100% { 
+                filter: drop-shadow(0 12px 30px rgba(26, 188, 156, 0.5))
+                        drop-shadow(0 6px 15px rgba(52, 152, 219, 0.4))
+                        drop-shadow(0 0 60px rgba(255, 215, 0, 0.25));
+            }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+        
+        @keyframes waveMotion {
+            0% { transform: translateX(-50%) scaleX(0.8); }
+            50% { transform: translateX(-50%) scaleX(1.2); }
+            100% { transform: translateX(-50%) scaleX(0.8); }
+        }
+        
+        /* サブタイトル - 濃い色で視認性最優先 */
         .subtitle {
-            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-            font-weight: 600;
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            font-weight: 700;
             font-family: 'Shippori Mincho', 'Noto Serif JP', serif;
-            color: #003d3d;
-            letter-spacing: 0.2em;
+            color: #0e7e6b; /* 濃いティール色 */
+            letter-spacing: 0.25em;
+            margin-top: 20px;
+            position: relative;
+            display: inline-block;
             text-shadow: 
-                1px 1px 2px rgba(255, 255, 255, 0.6),
-                2px 2px 4px rgba(0, 0, 0, 0.1);
-            opacity: 0.95;
+                2px 2px 4px rgba(255, 255, 255, 0.9),
+                -1px -1px 2px rgba(255, 255, 255, 0.8),
+                0 0 15px rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(26, 188, 156, 0.2);
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+        }
+        
+        /* サブタイトルの装飾線 - 濃い色で統一 */
+        .subtitle::before,
+        .subtitle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                #0e7e6b);
+            opacity: 0.6;
+        }
+        
+        .subtitle::before {
+            right: calc(100% + 25px);
+        }
+        
+        .subtitle::after {
+            left: calc(100% + 25px);
+            background: linear-gradient(90deg, 
+                #0e7e6b,
+                transparent);
         }
         
         /* Tap to Startコンテナ */
@@ -210,6 +331,14 @@
             transition: transform 0.3s ease;
             z-index: 10;
             text-align: center;
+        }
+        
+        .tap-start-container:hover {
+            transform: translateX(-50%) scale(1.05) translateY(-2px);
+        }
+        
+        .tap-start-container:active {
+            transform: translateX(-50%) scale(0.98);
         }
         
         
@@ -300,33 +429,67 @@
         }
         
         
-        /* 泡パーティクル */
-        .hex-particle {
+        /* 透明な泡パーティクル */
+        .bubble-particle {
             position: fixed;
             pointer-events: none;
             opacity: 0;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, 
-                rgba(255, 255, 255, 0.9),
-                rgba(135, 206, 235, 0.4));
+                rgba(255, 255, 255, 0.8),
+                rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 
-                inset -2px -2px 4px rgba(0, 0, 0, 0.1),
-                0 0 8px rgba(255, 255, 255, 0.5);
-            animation: float-up 10s ease-out forwards;
+                inset -2px -2px 4px rgba(255, 255, 255, 0.2),
+                0 0 10px rgba(255, 255, 255, 0.1);
+            animation: bubble-rise 15s ease-out forwards;
         }
         
-        @keyframes float-up {
+        /* 光のパーティクル - プロゲーム仕様 */
+        .light-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 
+                0 0 10px #48dbfb,
+                0 0 20px #48dbfb,
+                0 0 30px #48dbfb;
+            animation: light-float 20s linear infinite;
+        }
+        
+        @keyframes light-float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes bubble-rise {
             0% {
                 opacity: 0;
                 transform: translateY(0) translateX(0) scale(0);
             }
             10% {
-                opacity: 0.7;
+                opacity: 0.6;
                 transform: scale(1);
             }
             100% {
                 opacity: 0;
-                transform: translateY(-100vh) translateX(var(--drift)) scale(0.3);
+                transform: translateY(-120vh) translateX(var(--drift)) scale(0.8);
             }
         }
         
@@ -348,14 +511,18 @@
         
         /* iPhone専用最適化 */
         @media screen and (max-width: 768px) {
-            .game-title {
-                font-size: clamp(1.8rem, 8vw, 3.5rem);
-                letter-spacing: 0.03em;
+            .logo-container {
+                width: min(70vw, 380px); /* モバイルでも黄金比を意識 */
+            }
+            
+            .title-section {
+                top: 35%; /* モバイルでは少し上に調整 */
             }
             
             .subtitle {
                 font-size: clamp(0.85rem, 2.2vw, 1.1rem);
                 letter-spacing: 0.12em;
+                margin-top: 15px;
             }
             
             .tap-text {
@@ -386,10 +553,12 @@
         
         /* iPhone 14 Pro Max, Plusなど */
         @media screen and (max-width: 480px) {
-            .game-title {
-                font-size: clamp(1.6rem, 7.5vw, 3.2rem);
-                letter-spacing: 0.02em;
-                padding: 0 15px;
+            .logo-container {
+                width: min(75vw, 320px); /* 黄金比を維持 */
+            }
+            
+            .title-section {
+                top: 33%; /* 小さい画面では上に配置 */
             }
             
             .subtitle {
@@ -417,8 +586,12 @@
         
         /* iPhone 12, 13, 14標準 */
         @media screen and (max-width: 390px) {
-            .game-title {
-                font-size: clamp(1.5rem, 7vw, 3rem);
+            .logo-container {
+                width: 70vw; /* 黄金比サイズ */
+            }
+            
+            .title-section {
+                top: 32%;
             }
             
             .subtitle {
@@ -437,10 +610,14 @@
         
         /* iPhone SE, 12 mini */
         @media screen and (max-width: 375px) {
-            .game-title {
-                font-size: clamp(2.6rem, 11vw, 4.8rem);
-                transform: scale(0.93);
+            .logo-container {
+                width: 65vw; /* 黄金比維持 */
             }
+            
+            .title-section {
+                top: 30%;
+            }
+            
             
             .subtitle {
                 font-size: clamp(0.9rem, 2.8vw, 1.15rem);
@@ -453,10 +630,14 @@
         
         /* iPhone SE (1st gen)などの小型デバイス */
         @media screen and (max-width: 320px) {
-            .game-title {
-                font-size: 2.4rem;
-                transform: scale(0.9);
+            .logo-container {
+                width: 61.8vw; /* 黄金比 */
             }
+            
+            .title-section {
+                top: 28%;
+            }
+            
             
             .subtitle {
                 font-size: 0.85rem;
@@ -470,11 +651,11 @@
         /* 横向きモード */
         @media screen and (orientation: landscape) and (max-height: 600px) {
             .title-section {
-                margin-bottom: 30px;
+                top: 30%; /* 横向きでは上に配置 */
             }
             
-            .game-title {
-                font-size: 2.5rem;
+            .logo-container {
+                width: min(38.2vw, 350px); /* 横向きでも黄金比 */
             }
             
             .subtitle {
@@ -498,14 +679,27 @@
     <div class="main-container">
         <!-- タイトルセクション -->
         <div class="title-section">
-            <div class="title-glow"></div>
-            <h1 class="game-title">星灯のアルカディア</h1>
-            <p class="subtitle">～孤島に咲く二つの未来～</p>
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <img src="背景/logo.png" alt="星灯のアルカディア" class="game-logo animate__animated animate__fadeInDown">
+                <div class="logo-wave"></div>
+            </div>
+            <p class="subtitle animate__animated animate__fadeInUp animate__delay-1s">～孤島に咲く二つの未来～</p>
         </div>
         
         <!-- Tap to Start -->
         <div class="tap-start-container" onclick="startGame()">
             <div class="tap-text">Tap to Start</div>
+        </div>
+        
+        <!-- Version Info -->
+        <div class="version-info">
+            <span>Ver. 1.0.0</span>
+        </div>
+        
+        <!-- Copyright -->
+        <div class="copyright">
+            <span>© 2025 Star Light Arcadia Project</span>
         </div>
     </div>
     
@@ -518,20 +712,16 @@
         function initBackground() {
             const container = document.getElementById('bgContainer');
             
-            const bgDiv = document.createElement('div');
-            bgDiv.className = 'bg-image active';
-            bgDiv.style.backgroundImage = `url('${backgroundImage}')`;
-            bgDiv.style.backgroundSize = 'cover';
-            bgDiv.style.backgroundPosition = 'center';
+            // シンプルな背景画像の設定
+            const bgImage = document.createElement('div');
+            bgImage.className = 'bg-image active';
+            bgImage.style.backgroundImage = `url('${backgroundImage}')`;
+            container.appendChild(bgImage);
             
             // 画像読み込みエラー時のフォールバック
             const img = new Image();
-            img.onload = function() {
-                container.appendChild(bgDiv);
-            };
             img.onerror = function() {
-                bgDiv.style.background = backgroundFallback;
-                container.appendChild(bgDiv);
+                bgImage.style.background = backgroundFallback;
             };
             img.src = backgroundImage;
         }
@@ -608,24 +798,43 @@
             }
         }
         
-        // パーティクル生成
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'hex-particle';
+        // 透明な泡生成
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble-particle';
             
-            const size = Math.random() * 15 + 10;
+            const size = Math.random() * 20 + 8; // 8-28pxのサイズ
             const startX = Math.random() * window.innerWidth;
-            const drift = (Math.random() - 0.5) * 100;
+            const drift = (Math.random() - 0.5) * 60; // 左右のドリフト
+            
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = startX + 'px';
+            bubble.style.bottom = '-30px';
+            bubble.style.setProperty('--drift', drift + 'px');
+            
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => bubble.remove(), 15000);
+        }
+        
+        // 光のパーティクル生成 - プロゲーム仕様
+        function createLightParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'light-particle';
+            
+            const startX = Math.random() * window.innerWidth;
+            const size = Math.random() * 3 + 2;
             
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             particle.style.left = startX + 'px';
-            particle.style.bottom = '-20px';
-            particle.style.setProperty('--drift', drift + 'px');
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            particle.style.animationDelay = Math.random() * 5 + 's';
             
             document.body.appendChild(particle);
             
-            setTimeout(() => particle.remove(), 10000);
+            setTimeout(() => particle.remove(), 25000);
         }
         
         // キラキラエフェクト生成
@@ -655,16 +864,22 @@
             initBackground();
             initTouch();
             
-            // パーティクル定期生成 - 2秒ごとに生成
-            setInterval(createParticle, 2000);
+            // 透明な泡を定期生成
+            setInterval(createBubble, 3000);
             
-            // 初期パーティクル - 適度に生成
-            for(let i = 0; i < 3; i++) {
-                setTimeout(createParticle, i * 800);
+            // 初期泡を少し生成
+            for(let i = 0; i < 5; i++) {
+                setTimeout(createBubble, i * 1000);
             }
             
             // キラキラエフェクト定期生成
             setInterval(addSparkleToContainer, 3000);
+            
+            // 光のパーティクル生成
+            for(let i = 0; i < 10; i++) {
+                setTimeout(createLightParticle, i * 2000);
+            }
+            setInterval(createLightParticle, 5000);
             
         });
         
